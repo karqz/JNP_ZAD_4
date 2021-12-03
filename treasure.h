@@ -7,55 +7,55 @@
 template<typename T>
 concept ValueType = std::integral<T>;
 
-template<typename ValueType, bool IsTrapped>
+template<ValueType T, bool IsTrapped>
 class Treasure {};
 
-template<typename ValueType>
-class Treasure<ValueType, true> {
+template<ValueType T>
+class Treasure<T, true> {
     public:
         using isTrapped = std::integral_constant<bool,true>;
         
-        constexpr Treasure(ValueType value):value(value){};
+        constexpr Treasure(T value):value(value){};
 
-        constexpr ValueType evaluate() const {
+        constexpr T evaluate() const {
             return value;
         };
 
-        constexpr ValueType getLoot() {
-            ValueType help = value;
+        constexpr T getLoot() {
+            T help = value;
             value = 0;
             return help;
         };
 
     private:
-        ValueType value;
+        const T value;
 };
 
-template<typename ValueType>
-class Treasure<ValueType, false> {
+template<ValueType T>
+class Treasure<T, false> {
     public:
-        using isTrapped = std::integral_constant<bool,false>;
+        using isTrapped = std::integral_constant<bool, false>;
+        
+        constexpr Treasure(T value):value(value){};
 
-        constexpr Treasure(ValueType value):value(value){};
-
-        constexpr ValueType evaluate() const {
+        constexpr T evaluate() const {
             return value;
         };
 
-        constexpr ValueType getLoot() {
-            ValueType help = value;
+        constexpr T getLoot() {
+            T help = value;
             value = 0;
             return help;
         };
-        
+
     private:
-        const ValueType value;
+        T value;
 };
 
-template<typename ValueType>
-class SafeTreasure : public Treasure<ValueType, false>{};
+template<ValueType T>
+class SafeTreasure : public Treasure<T, false>{};
 
-template<typename ValueType>
-class TrappedTreasure : public Treasure<ValueType, true>{};
+template<ValueType T>
+class TrappedTreasure : public Treasure<T, true>{};
 
 #endif //__TREASURE__
