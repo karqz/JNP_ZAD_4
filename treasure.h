@@ -53,9 +53,9 @@ class Treasure<ValueType, false> {
 };
 
 template<typename ValueType>
-class SafeTreasure : public Treasure<ValueType, true>{};
+class SafeTreasure : public Treasure<ValueType, false>{};
 
 template<typename ValueType>
-class TrappedTreasure : public Treasure<ValueType, false>{};
+class TrappedTreasure : public Treasure<ValueType, true>{};
 
 #endif //__TREASURE__
