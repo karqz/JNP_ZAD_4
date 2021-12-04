@@ -59,7 +59,7 @@ class Adventurer<T, false> {
         constexpr Adventurer():value(0) {};
 
         template<bool IsTrapped>
-        constexpr void loot(const Treasure<T, IsTrapped> &&treasure) {
+        constexpr void loot(Treasure<T, IsTrapped> &&treasure) {
             if (!IsTrapped) {
                 value += treasure.getLoot();
             }
