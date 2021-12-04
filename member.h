@@ -63,6 +63,9 @@ class Adventurer<T, false> {
             if (!IsTrapped) {
                 value += treasure.getLoot();
             }
+            else if (strength > 0) {
+                value += treasure.getLoot();
+            }
         }
 
         constexpr T pay() {
