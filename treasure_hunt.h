@@ -1,12 +1,12 @@
-#ifndef __TREASURE_HUNT__
-#define __TREASURE_HUNT__
+#ifndef TREASURE_HUNT_H
+#define TREASURE_HUNT_H
 
-#include "treasure.h"
+#include "member.h"
 
-#include<numeric>
-#include<vector>
-#include<iostream>
-#include<concepts>
+#include <numeric>
+#include <vector>
+#include <iostream>
+#include <concepts>
 
 template <typename T>
 concept treasure_c = requires(T treasure) {
@@ -19,24 +19,18 @@ concept member_c = requires(T member) {
     { [] () constexpr { return T::isArmed; }() };
     { member.isArmed } -> std::convertible_to<bool>;
     { member.pay() } -> std::integral;
-    member.loot(Treasure<decltype(member.pay()), true)>());
+    member.loot(Treasure<decltype(member.pay()), true>());
     member.loot(Treasure<decltype(member.pay()), false>());
 };
 
 template <typename T>
-concept EncounterSide = treasure_c || member_c;
+concept EncounterSide = treasure_c<T> || member_c<T>;
 
 template <EncounterSide sideA, EncounterSide sideB>
 struct Encounter {
     sideA &side_a;
     sideB &side_b;
 };
-
-template <EncounterSide A, EncounterSide B>
-concept encounter_c =
-        (treasure_c<A> && member_c<B>) ||
-        (member_c<A> && treasure_c<B>) ||
-        (member_c<A> && member_c<B>);
 
 // zrobic funkcje pomcniczą na przekazywanie pieniążków
 template <member_c sideA, member_c sideB>
@@ -46,20 +40,20 @@ void run(Encounter<sideA, sideB> encounter) {
     if (memberA.isArmed && memberB.isArmed) {
         if (memberA.getStrength() > memberB.getStrength) {
             auto money = memberB.pay();
-            memberA.loot(SafeTreasure<decltype(money)> treasure(money));
+            memberA.loot(SafeTreasure<decltype(money)>(money));
         }
-        else if (memberB.getStrength() > memberA.gerStrength()) {
+        else if (memberB.getStrength() > memberA.getStrength()) {
             auto money = memberA.pay();
-            memberB.loot(SafeTreasure<decltype(money)> treasure(money));
+            memberB.loot(SafeTreasure<decltype(money)>(money));
         }
     }
     else if (memberA.isArmed && !memberB.isArmed) {
         auto money = memberB.pay();
-        memberA.loot(SafeTreasure<decltype(money)> treasure(money));
+        memberA.loot(SafeTreasure<decltype(money)>(money));
     }
     else if (!memberA.isArmed && memberB.isArmed) {
         auto money = memberA.pay();
-        memberB.loot(SafeTreasure<decltype(money)> treasure(money));
+        memberB.loot(SafeTreasure<decltype(money)>(money));
     }
 }
 
@@ -75,9 +69,14 @@ void run(Encounter<sideA, sideB> encounter) {
     member.loot(encounter.side_a);
 }
 
-template <encounter_c... E>
+template <typename E>
+concept is_encounter_c = requires(E encounter) {
+    { Encounter{encounter} } -> std::same_as<E>;
+};
+
+template <is_encounter_c... E>
 void expedition(E... e) {
     (... , run(e));
 }
 
-#endif //__TREASURE_HUNT__
+#endif //TREASURE_HUNT_H
