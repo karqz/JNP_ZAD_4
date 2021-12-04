@@ -4,8 +4,12 @@
 #include<concepts>
 #include<type_traits>
 
-template<typename T>
-concept ValueType = std::is_integral<T>::value;
+namespace {
+
+    template<typename T>
+    concept ValueType = std::is_integral<T>::value;
+
+}
 
 template<ValueType T, bool IsTrapped>
 class Treasure {
@@ -19,9 +23,9 @@ public:
     };
 
     constexpr T getLoot() {
-        T help = value;
+        T valuables = value;
         value = 0;
-        return help;
+        return valuables;
     };
 
 private:
