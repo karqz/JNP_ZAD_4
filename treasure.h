@@ -5,15 +5,12 @@
 #include<type_traits>
 
 template<typename T>
-concept ValueType = std::integral<T>;
+concept ValueType = std::is_integral<T>::value;
 
 template<ValueType T, bool IsTrapped>
-class Treasure {};
-
-template<ValueType T>
-class Treasure<T, true> {
+class Treasure {
     public:
-        using isTrapped = std::integral_constant<bool,true>;
+        constexpr static bool isTrapped = IsTrapped;
         
         constexpr Treasure(T value):value(value){};
 
@@ -29,27 +26,6 @@ class Treasure<T, true> {
 
     private:
         const T value;
-};
-
-template<ValueType T>
-class Treasure<T, false> {
-    public:
-        using isTrapped = std::integral_constant<bool, false>;
-        
-        constexpr Treasure(T value):value(value){};
-
-        constexpr T evaluate() const {
-            return value;
-        };
-
-        constexpr T getLoot() {
-            T help = value;
-            value = 0;
-            return help;
-        };
-
-    private:
-        T value;
 };
 
 template<ValueType T>
