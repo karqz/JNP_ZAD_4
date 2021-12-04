@@ -23,7 +23,7 @@ class Adventurer<T, true> {
 
         constexpr Adventurer(strength_t strength):strength(strength),value(0) {};
 
-        constexpr strength_t getStrength() {
+        constexpr strength_t getStrength() const {
             return strength;
         }
 
@@ -88,7 +88,7 @@ class Veteran {
 
         constexpr Veteran():strength(fibonacci(CompletedExpeditions)),value(0) {};
 
-        constexpr strength_t getStrength() {
+        constexpr strength_t getStrength() const {
             return strength;
         }
         
