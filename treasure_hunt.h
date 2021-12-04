@@ -40,30 +40,23 @@ constexpr void run(Encounter<sideA, sideB> encounter) {
         auto money = encounter.side_b.pay();
         encounter.side_a.loot(SafeTreasure<decltype(money)>(money));
     }
-    else (encounter.side_b.getStrength() > encounter.side_a.getStrength()) {
+    else if (encounter.side_b.getStrength() > encounter.side_a.getStrength()) {
         auto money = encounter.side_a.pay();
         encounter.side_b.loot(SafeTreasure<decltype(money)>(money));
     }
 }
 
 template <member_c sideA, member_c sideB>
-requires (sideA::isArmed && !sideB::isArmed)
+requires (!sideA::isArmed || !sideB::isArmed)
 constexpr void run(Encounter<sideA, sideB> encounter) {
-    auto money = encounter.side_b.pay();
-    encounter.side_a.loot(SafeTreasure<decltype(money)>(money));
-}
-
-template <member_c sideA, member_c sideB>
-requires (!sideA::isArmed && sideB::isArmed)
-constexpr void run(Encounter<sideA, sideB> encounter) {
-    auto money = encounter.side_a.pay();
-    encounter.side_b.loot(SafeTreasure<decltype(money)>(money));
-}
-
-template <member_c sideA, member_c sideB>
-requires (!sideA::isArmed && !sideB::isArmed)
-constexpr void run(Encounter<sideA, sideB> encounter) {
-    // do nothing
+    if (encounter.side_a.isArmed) {
+        auto money = encounter.side_b.pay();
+        encounter.side_a.loot(SafeTreasure<decltype(money)>(money));
+    }
+    else if (encounter.side_b.isArmed) {
+        auto money = encounter.side_a.pay();
+        encounter.side_b.loot(SafeTreasure<decltype(money)>(money));
+    }
 }
 
 template <member_c sideA, treasure_c sideB>
