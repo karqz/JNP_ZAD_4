@@ -33,27 +33,37 @@ struct Encounter {
     sideB &side_b;
 };
 
-// zrobic funkcje pomcniczą na przekazywanie pieniążków
 template <member_c sideA, member_c sideB>
+requires (sideA::isArmed && sideB::isArmed)
 constexpr void run(Encounter<sideA, sideB> encounter) {
-    if (encounter.side_a.isArmed && encounter.side_b.isArmed) {
-        if (encounter.side_a.getStrength() > encounter.side_b.getStrength()) {
-            auto money = encounter.side_b.pay();
-            encounter.side_a.loot(SafeTreasure<decltype(money)>(money));
-        }
-        else if (encounter.side_b.getStrength() > encounter.side_a.getStrength()) {
-            auto money = encounter.side_a.pay();
-            encounter.side_b.loot(SafeTreasure<decltype(money)>(money));
-        }
-    }
-    else if (encounter.side_a.isArmed && !encounter.side_b.isArmed) {
+    if (encounter.side_a.getStrength() > encounter.side_b.getStrength()) {
         auto money = encounter.side_b.pay();
         encounter.side_a.loot(SafeTreasure<decltype(money)>(money));
     }
-    else if (!encounter.side_a.isArmed && encounter.side_b.isArmed) {
+    else (encounter.side_b.getStrength() > encounter.side_a.getStrength()) {
         auto money = encounter.side_a.pay();
         encounter.side_b.loot(SafeTreasure<decltype(money)>(money));
     }
+}
+
+template <member_c sideA, member_c sideB>
+requires (sideA::isArmed && !sideB::isArmed)
+constexpr void run(Encounter<sideA, sideB> encounter) {
+    auto money = encounter.side_b.pay();
+    encounter.side_a.loot(SafeTreasure<decltype(money)>(money));
+}
+
+template <member_c sideA, member_c sideB>
+requires (!sideA::isArmed && sideB::isArmed)
+constexpr void run(Encounter<sideA, sideB> encounter) {
+    auto money = encounter.side_a.pay();
+    encounter.side_b.loot(SafeTreasure<decltype(money)>(money));
+}
+
+template <member_c sideA, member_c sideB>
+requires (!sideA::isArmed && !sideB::isArmed)
+constexpr void run(Encounter<sideA, sideB> encounter) {
+    // do nothing
 }
 
 template <member_c sideA, treasure_c sideB>
