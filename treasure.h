@@ -14,7 +14,7 @@ class Treasure {
         
         constexpr Treasure(T value):value(value){};
 
-        constexpr T evaluate() const {
+        constexpr T evaluate() {
             return value;
         };
 
@@ -25,13 +25,13 @@ class Treasure {
         };
 
     private:
-        const T value;
+        T value;
 };
 
 template<ValueType T>
-class SafeTreasure : public Treasure<T, false>{};
+using SafeTreasure = Treasure<T, false>;
 
 template<ValueType T>
-class TrappedTreasure : public Treasure<T, true>{};
+using TrappedTreasure = Treasure<T, true>;
 
 #endif //__TREASURE__

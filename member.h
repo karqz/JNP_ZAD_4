@@ -23,25 +23,25 @@ class Adventurer<T, true> {
 
         constexpr Adventurer(strength_t strength):strength(strength),value(0) {};
 
-        constexpr strength_t getStrength() {
+        constexpr strength_t getStrength() const {
             return strength;
         }
 
         template<bool IsTrapped>
         constexpr void loot(Treasure<T, IsTrapped> &&treasure) {
-            if (!Treasure<T, IsTrapped>::isTrapped) {
-                value += treasure.getLoot();
+            if (!IsTrapped) {
+                value += getLoot(treasure);
             }
             else if (strength > 0) {
-                value += treasure.getLoot();
+                value += getLoot(treasure);
                 strength /= 2;
             }
-        };
+        }
 
         constexpr T pay() {
-            T help = value;
+            T to_pay = value;
             value = 0;
-            return help;
+            return to_pay;
         }
 
     private:
@@ -59,16 +59,16 @@ class Adventurer<T, false> {
         constexpr Adventurer():value(0) {};
 
         template<bool IsTrapped>
-        constexpr void loot(Treasure<T, IsTrapped> &&treasure) {
-            if (!Treasure<T,IsTrapped>::isTrapped) {
-                value += treasure.getLoot();
+        constexpr void loot(const Treasure<T, IsTrapped> &&treasure) {
+            if (!IsTrapped) {
+                value += getLoot(treasure);
             }
-        };
+        }
 
         constexpr T pay() {
-            T help = value;
+            T to_pay = value;
             value = 0;
-            return help;
+            return to_pay;
         };
 
     private:
@@ -76,7 +76,7 @@ class Adventurer<T, false> {
 };
 
 template<ValueType T>
-class Explorer : public Adventurer<T, false> {};
+using Explorer = Adventurer<T, false>;
 
 
 template<ValueType T, std::size_t CompletedExpeditions>
@@ -87,22 +87,22 @@ class Veteran {
         constexpr static bool isArmed = true;
 
         constexpr Veteran():strength(fibonacci(CompletedExpeditions)),value(0) {};
-    
+
+        constexpr strength_t getStrength() const {
+            return strength;
+        }
+        
         template<bool IsTrapped>
-        constexpr void loot(const Treasure<T, IsTrapped> &&treasure) {
-            if (!Treasure<T,IsTrapped>::isTrapped) {
-                value += treasure.getLoot();
+        constexpr void loot(Treasure<T, IsTrapped> &&treasure) {
+            if (strength > 0) {
+                value += getLoot(treasure);
             }
-            else if (strength > 0) {
-                value += treasure.getLoot();
-                strength /= 2;
-            }
-        };
+        }
 
         constexpr T pay() {
-            T help = value;
+            T to_pay = value;
             value = 0;
-            return help;
+            return to_pay;
         };
 
     private:
