@@ -23,17 +23,17 @@ class Adventurer<T, true> {
 
         constexpr Adventurer(strength_t strength):strength(strength),value(0) {};
 
-        constexpr strength_t getStrength() const {
+        constexpr strength_t getStrength() {
             return strength;
         }
 
         template<bool IsTrapped>
         constexpr void loot(Treasure<T, IsTrapped> &&treasure) {
             if (!IsTrapped) {
-                value += getLoot(treasure);
+                value += treasure.getLoot();
             }
             else if (strength > 0) {
-                value += getLoot(treasure);
+                value += treasure.getLoot();
                 strength /= 2;
             }
         }
@@ -61,7 +61,7 @@ class Adventurer<T, false> {
         template<bool IsTrapped>
         constexpr void loot(const Treasure<T, IsTrapped> &&treasure) {
             if (!IsTrapped) {
-                value += getLoot(treasure);
+                value += treasure.getLoot();
             }
         }
 
@@ -88,14 +88,14 @@ class Veteran {
 
         constexpr Veteran():strength(fibonacci(CompletedExpeditions)),value(0) {};
 
-        constexpr strength_t getStrength() const {
+        constexpr strength_t getStrength() {
             return strength;
         }
         
         template<bool IsTrapped>
         constexpr void loot(Treasure<T, IsTrapped> &&treasure) {
             if (strength > 0) {
-                value += getLoot(treasure);
+                value += treasure.getLoot();
             }
         }
 
