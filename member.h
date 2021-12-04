@@ -4,24 +4,26 @@
 #include "treasure.h"
 #include <cstdint>
 
-template<std::size_t v>
-concept CompletedExpeditions = v < 25;
+namespace {
 
-constexpr uint32_t fibonacci(uint32_t n) {
-    if (n == 0)
-        return 0;
-    if (n == 1)
-        return 1;
+    constexpr uint32_t fibonacci(uint32_t n) {
+        if (n == 0)
+            return 0;
+        if (n == 1)
+            return 1;
 
-    uint32_t fib[n + 1];
-    fib[0] = 0;
-    fib[1] = 1;
-    for (std::size_t i = 2; i <= n; i++)
-        fib[i] = fib[i - 1] + fib[i - 2];
+        uint32_t fib[n + 1];
+        fib[0] = 0;
+        fib[1] = 1;
+        for (std::size_t i = 2; i <= n; i++)
+            fib[i] = fib[i - 1] + fib[i - 2];
 
-    return fib[n];
-}
+        return fib[n];
+    }
 
+} // anonymous namespace
+
+// Adventurer
 template<ValueType T, bool IsArmed>
 class Adventurer {};
 
@@ -50,9 +52,9 @@ public:
     }
 
     constexpr T pay() {
-        T to_pay = value;
+        T valuables = value;
         value = 0;
-        return to_pay;
+        return valuables;
     }
 
 private:
@@ -71,26 +73,28 @@ public:
 
     template<bool IsTrapped>
     constexpr void loot(Treasure<T, IsTrapped> &&treasure) {
-        if (!IsTrapped) {
+        if constexpr (!IsTrapped) {
             value += treasure.getLoot();
         }
     }
 
     constexpr T pay() {
-        T to_pay = value;
+        T valuables = value;
         value = 0;
-        return to_pay;
+        return valuables;
     };
 
 private:
     T value;
 };
+// Adventurer
 
 template<ValueType T>
 using Explorer = Adventurer<T, false>;
 
-
+// Veteran
 template<ValueType T, std::size_t CompletedExpeditions>
+requires (CompletedExpeditions < 25)
 class Veteran {
 public:
     using strength_t = uint32_t;
@@ -111,14 +115,15 @@ public:
     }
 
     constexpr T pay() {
-        T to_pay = value;
+        T valuables = value;
         value = 0;
-        return to_pay;
+        return valuables;
     };
 
 private:
     strength_t strength;
     T value;
 };
+// Veteran
 
 #endif //__MEMBER__
