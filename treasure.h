@@ -9,23 +9,23 @@ concept ValueType = std::is_integral<T>::value;
 
 template<ValueType T, bool IsTrapped>
 class Treasure {
-    public:
-        constexpr static bool isTrapped = IsTrapped;
-        
-        constexpr Treasure(T value):value(value){};
+public:
+    constexpr static bool isTrapped = IsTrapped;
 
-        constexpr T evaluate() {
-            return value;
-        };
+    constexpr Treasure(T value):value(value){};
 
-        constexpr T getLoot() {
-            T help = value;
-            value = 0;
-            return help;
-        };
+    constexpr T evaluate() {
+        return value;
+    };
 
-    private:
-        T value;
+    constexpr T getLoot() {
+        T help = value;
+        value = 0;
+        return help;
+    };
+
+private:
+    T value;
 };
 
 template<ValueType T>
